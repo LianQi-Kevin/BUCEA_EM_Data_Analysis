@@ -34,10 +34,23 @@ async def xinfadi_price(session, data: XinFaDiPriceDetailRequest = None, retry_c
                 data={"limit": 20, "current": 1} if data is None else data.model_dump(by_alias=True),
                 timeout=60
         ) as response:
+            # 记录响应状态码和头信息
+            logging.debug(f"Response Status: {response.status}")
+            logging.debug(f"Response Headers: {response.headers}")
+
+            # 异步读取并记录响应体
+            response_body = await response.text()  # 或者使用 response.json() 对于JSON响应
+            logging.debug(f"Response Body: {response_body}")
+
+            # 其他处理...
             response.raise_for_status()
             json_response = await response.json()
-            logging.debug(f"Get XinFaDi Price Detail successful")
+            logging.debug(f"Get XinFaDi Price Detail successful, data: {json_response}")
             return XinFaDiPriceDetailResponse(**json_response)
+    except aiohttp.ClientError as e:
+        logging.warning(f"aiohttp request error, retry count: {retry_count}, error: {e}")
+        await asyncio.sleep(3)
+        return await xinfadi_price(session, data, retry_count - 1)
     except Exception as e:
         logging.warning(f"Get XinFaDi Price Detail failed, retry count: {retry_count}, error: {e}")
         await asyncio.sleep(3)
@@ -55,7 +68,7 @@ async def write_csv(export_path: str, headers: List[str] = None):
             if writer is None:
                 # 首次写入，创建writer并写入表头
                 writer = csv.DictWriter(file, fieldnames=headers)
-                await file.write(','.join(headers) + '\n')
+                await writer.writeheader()
             await writer.writerow(data)
             queue.task_done()
 
@@ -66,8 +79,7 @@ async def task_main(session, index, data: XinFaDiPriceDetailRequest):
         logging.debug(f"data: {data.model_dump(by_alias=True)}")
         response = await xinfadi_price(session, data)
         logging.debug(f"task index: {index}, Successful get data: {response}")
-        response_data = response.list  # 假设这是获取到的数据字典
-        for item in response_data:
+        for item in response.list:
             await queue.put(item)
         logging.debug(f"task index: {index}, Successful add to writer queue")
         # return response
