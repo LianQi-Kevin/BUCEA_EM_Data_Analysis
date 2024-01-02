@@ -1,0 +1,6 @@
+*.csv
+*.log
+
+.idea
+.vscode
+__pycache__

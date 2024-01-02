@@ -1,0 +1,4 @@
+requests
+Pydantic==2.5.2
+aiohttp
+aiofiles
