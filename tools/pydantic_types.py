@@ -24,9 +24,9 @@ class XinFaDiPriceDetailResponseDataObject(BaseModel):
     lowPrice: float = None
     highPrice: float = None
     avgPrice: float = None
-    place: str = None
-    specInfo: Optional[str] = None
-    unitInfo: Optional[str] = None
+    place: Optional[str] = None
+    specInfo: Optional[Any] = None
+    unitInfo: Optional[Any] = None
     pubDate: datetime = None
     status: Optional[Any] = None
 
