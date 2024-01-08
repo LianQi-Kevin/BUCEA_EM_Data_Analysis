@@ -16,15 +16,15 @@ class XinFaDiPriceDetailRequest(BaseModel):
 
 class XinFaDiPriceDetailResponseDataObject(BaseModel):
     object_id: int = Field(..., alias="id")
-    prodName: str = None
-    prodCatid: Optional[int] = None
-    prodCat: Optional[str] = None
-    prodPcatid: Optional[int] = None
+    prodName: str
+    prodCatid: Optional[Any] = None
+    prodCat: Optional[Any] = None
+    prodPcatid: Optional[Any] = None
     prodPcat: Optional[str] = None
-    lowPrice: float = None
-    highPrice: float = None
-    avgPrice: float = None
-    place: Optional[str] = None
+    lowPrice: float
+    highPrice: float
+    avgPrice: float
+    place: Optional[Any] = None
     specInfo: Optional[Any] = None
     unitInfo: Optional[Any] = None
     pubDate: datetime = None
