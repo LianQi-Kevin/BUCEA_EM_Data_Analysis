@@ -135,7 +135,8 @@ class EMDrawer(object):
 
     def plot(self, prod_names: List[str], plot_values: List[str] = None, fig_size: Tuple[int, int] = (10, 6),
              x_label: str = 'Date', y_label: str = 'Price', title: str = None, save_path: str = './img.png',
-             outlier_threshold: float = None, theme: Literal["black", "white"] = "white"):
+             outlier_threshold: float = None, theme: Literal["black", "white"] = "white",
+             save_csv_path: str = None):
         """
         绘制数据图表并保存。
 
@@ -151,6 +152,7 @@ class EMDrawer(object):
             save_path (str): 图表保存路径，默认为 './img.png'。
             outlier_threshold (float, optional): 异常值过滤阈值。
             theme (Literal["black", "white"]): 图表主题，默认为 'white'。
+            save_csv_path (str): 数据 CSV 文件保存路径，默认为 './data.csv'。
 
         Returns:
             None
@@ -192,6 +194,16 @@ class EMDrawer(object):
             plt.savefig(save_path, bbox_inches='tight', dpi='figure', facecolor=theme)
         else:
             plt.savefig(save_path, transparent=True, bbox_inches='tight', dpi='figure')
+
+        # save pivot_df to CSV
+        try:
+            if save_csv_path is not None:
+                if os.path.dirname(save_csv_path) != "":
+                    os.makedirs(os.path.dirname(save_csv_path), exist_ok=True)
+                pivot_df.to_csv(save_csv_path)
+                logging.info(f"pivot_df saved to CSV at {save_csv_path}")
+        except Exception as e:
+            logging.error(f"Error saving pivot_df to CSV: {e}")
 
 
 if __name__ == '__main__':
